@@ -1,9 +1,7 @@
 import { Router, Request, Response } from "express";
 import HttpStatusCodes from "http-status-codes";
-import config from "config";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-
+import _ from "underscore";
 import Payload from "../../types/Payload";
 import User, { IUser } from "../../models/User";
 import { createJwt } from "../../utils/index";
@@ -45,8 +43,7 @@ router.post(
       };
 
       user = new User(userFields);
-
-      user = await user.save();
+      await user.save();
       res.json(user);
     } catch (err) {
       console.error(err.message);
@@ -93,16 +90,6 @@ router.post(
         userId: user.id,
       };
       const token: string = createJwt(payload);
-
-      // jwt.sign(
-      //   payload,
-      //   config.get("jwtSecret"),
-      //   { expiresIn: config.get("jwtExpiration") },
-      //   (err, token) => {
-      //     if (err) throw err;
-      //     res.json({ token });
-      //   }
-      // );
       res.json({ token });
     } catch (err) {
       console.error(err.message);
